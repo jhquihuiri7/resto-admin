@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { useState } from "react"; 
-import app from '../firebase/client';
+import {app} from '../firebase/client';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -24,32 +24,32 @@ export function LoginForm({
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault(); // Evita que el formulario se envíe automáticamente
-
+  
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  
       // Usuario autenticado
       const user = userCredential.user;
-      console.log("Usuario autenticado:", user.email);
-
+      console.log("Usuario autenticado:", user?.email);  // Using optional chaining
+  
       // Obtener el token de autenticación
       const idToken = await user.getIdToken();
-      console.log("ID Token:", idToken);
+      const userEmail = user?.email || "";  // Safely access email using optional chaining
+  
       localStorage.setItem("trackerToken", idToken);
-
+      localStorage.setItem("trackerEmail", userEmail);
+      //localStorage.setItem("trackerName", idToken);
+  
       // Puedes usar el token para enviarlo a tu backend o almacenarlo
       setError(null); // Limpiar errores si el inicio de sesión es exitoso
-
-      router.push("/dashboard")
+  
+      router.push("/dashboard");
     } catch (error: unknown) {
       console.error("Error al iniciar sesión:", error);
       setError("Email o contraseña incorrectas"); // Mostrar el mensaje de error al usuario
     }
   };
+  
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

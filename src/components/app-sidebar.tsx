@@ -5,12 +5,6 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
   SquareTerminal,
 } from "lucide-react"
 
@@ -26,7 +20,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const data = {
+const data2 = {
   user: {
     name: "shadcn",
     email: "m@example.com",
@@ -34,123 +28,80 @@ const data = {
   },
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Panel Principal",
           url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
+        }
       ],
     },
     {
-      title: "Models",
+      title: "Menu",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "Administrar Menu",
           url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
+        }
       ],
     },
     {
-      title: "Documentation",
+      title: "Ordenes",
       url: "#",
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
+          title: "Mesas",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Pedidos",
           url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
+        }
       ],
     },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  ]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type SubscriptionDatetime = {
+  seconds: number;
+  nanoseconds: number;
+};
+
+type UserData = {
+  company: string;
+  suscription_expire_datetime: SubscriptionDatetime;
+  last_name: string;
+  created_datetime: SubscriptionDatetime;
+  last_login_datetime: SubscriptionDatetime;
+  suscription: number;
+  first_name: string;
+  rol: number;
+};
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  data: UserData;
+}
+
+export function AppSidebar({ data, ...props }: AppSidebarProps) {
+  const [email, setEmail] = React.useState<string | null>(null);
+
+  // Ensure this runs only on the client
+  React.useEffect(() => {
+    const emailFromStorage = localStorage.getItem("trackerEmail");
+    setEmail(emailFromStorage);
+  }, []);
+
+  const user = {
+    name: data.first_name + " " + data.last_name,
+    email: (email) ? email : "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  }
   return (
     <Sidebar
       className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -165,8 +116,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-medium">{data.company}</span>
+                  <span className="truncate text-xs">Restaurante</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -174,10 +125,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data2.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )
