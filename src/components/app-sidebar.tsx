@@ -36,6 +36,14 @@ const data2 = {
         {
           title: "Panel Principal",
           url: "#",
+        },
+        {
+          title: "Usuarios",
+          url: "#",
+        },
+        {
+          title: "Equipo",
+          url: "#",
         }
       ],
     },
@@ -86,12 +94,13 @@ type UserData = {
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   data: UserData;
+  selectedItem: string;
+  setSelectedItem: (item: string) => void;
 }
 
-export function AppSidebar({ data, ...props }: AppSidebarProps) {
+export function AppSidebar({ data, selectedItem, setSelectedItem, ...props }: AppSidebarProps) {
   const [email, setEmail] = React.useState<string | null>(null);
 
-  // Ensure this runs only on the client
   React.useEffect(() => {
     const emailFromStorage = localStorage.getItem("trackerEmail");
     setEmail(emailFromStorage);
@@ -99,9 +108,10 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
 
   const user = {
     name: data.first_name + " " + data.last_name,
-    email: (email) ? email : "m@example.com",
+    email: email ? email : "m@example.com",
     avatar: "/avatars/shadcn.jpg",
-  }
+  };
+
   return (
     <Sidebar
       className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -125,11 +135,11 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data2.navMain} />
+        <NavMain items={data2.navMain} selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

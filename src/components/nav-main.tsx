@@ -21,17 +21,21 @@ import {
 
 export function NavMain({
   items,
+  selectedItem,
+  setSelectedItem,
 }: {
   items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+      title: string;
+      url: string;
+    }[];
+  }[];
+  selectedItem: string;
+  setSelectedItem: (item: string) => void;
 }) {
   return (
     <SidebarGroup>
@@ -41,9 +45,11 @@ export function NavMain({
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={item.url}>
+                <a href="#">
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span className={item.title === selectedItem ? "font-bold text-primary" : ""}>
+                    {item.title}
+                  </span>
                 </a>
               </SidebarMenuButton>
               {item.items?.length ? (
@@ -59,7 +65,7 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <a href="#" onClick={() => setSelectedItem(subItem.title)}>
                               <span>{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>
@@ -74,5 +80,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
