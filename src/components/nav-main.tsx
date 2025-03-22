@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight} from "lucide-react"
 
 import {
   Collapsible,
@@ -18,22 +18,14 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { Menu } from "@/constants/menu"
 
 export function NavMain({
   items,
   selectedItem,
   setSelectedItem,
 }: {
-  items: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
+  items: Menu[];
   selectedItem: string;
   setSelectedItem: (item: string) => void;
 }) {
@@ -52,7 +44,7 @@ export function NavMain({
                   </span>
                 </a>
               </SidebarMenuButton>
-              {item.items?.length ? (
+              {item.items?.some(subItem => subItem.show) ? (
                 <>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuAction className="data-[state=open]:rotate-90">
@@ -62,7 +54,7 @@ export function NavMain({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
+                      {item.items.filter(subItem => subItem.show).map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <a href="#" onClick={() => setSelectedItem(subItem.title)}>

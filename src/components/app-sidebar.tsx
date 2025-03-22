@@ -2,10 +2,7 @@
 
 import * as React from "react"
 import {
-  BookOpen,
-  Bot,
   Command,
-  SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -19,62 +16,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { NavMenuManager, Menu } from "@/constants/menu"
 
-const data2 = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Panel Principal",
-          url: "#",
-        },
-        {
-          title: "Usuarios",
-          url: "#",
-        },
-        {
-          title: "Equipo",
-          url: "#",
-        }
-      ],
-    },
-    {
-      title: "Menu",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Administrar Menu",
-          url: "#",
-        }
-      ],
-    },
-    {
-      title: "Ordenes",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Mesas",
-          url: "#",
-        },
-        {
-          title: "Pedidos",
-          url: "#",
-        }
-      ],
-    },
-  ]
-}
 
 type SubscriptionDatetime = {
   seconds: number;
@@ -100,16 +43,19 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ data, selectedItem, setSelectedItem, ...props }: AppSidebarProps) {
   const [email, setEmail] = React.useState<string | null>(null);
+  const [navMain, setNavMain] = React.useState<Menu[]>([]);
 
   React.useEffect(() => {
     const emailFromStorage = localStorage.getItem("trackerEmail");
     setEmail(emailFromStorage);
+    const menuManager = new NavMenuManager(data.rol);
+    setNavMain(menuManager.getNavMenu())
   }, []);
 
   const user = {
     name: data.first_name + " " + data.last_name,
     email: email ? email : "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/vercel.svg",
   };
 
   return (
@@ -135,7 +81,7 @@ export function AppSidebar({ data, selectedItem, setSelectedItem, ...props }: Ap
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data2.navMain} selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
+        <NavMain items={navMain} selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
