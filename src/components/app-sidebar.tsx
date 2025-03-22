@@ -17,23 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { NavMenuManager, Menu } from "@/constants/menu"
-
-
-type SubscriptionDatetime = {
-  seconds: number;
-  nanoseconds: number;
-};
-
-type UserData = {
-  company: string;
-  suscription_expire_datetime: SubscriptionDatetime;
-  last_name: string;
-  created_datetime: SubscriptionDatetime;
-  last_login_datetime: SubscriptionDatetime;
-  suscription: number;
-  first_name: string;
-  rol: number;
-};
+import { UserData } from "@/constants/user"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   data: UserData;
@@ -48,9 +32,9 @@ export function AppSidebar({ data, selectedItem, setSelectedItem, ...props }: Ap
   React.useEffect(() => {
     const emailFromStorage = localStorage.getItem("trackerEmail");
     setEmail(emailFromStorage);
-    const menuManager = new NavMenuManager(data.rol);
+    const menuManager = new NavMenuManager(data.role);
     setNavMain(menuManager.getNavMenu())
-  }, []);
+  }, [data.role]);
 
   const user = {
     name: data.first_name + " " + data.last_name,

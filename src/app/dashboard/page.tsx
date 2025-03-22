@@ -4,23 +4,8 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { DataTable } from "@/components/data_table";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
-
-type SubscriptionDatetime = {
-  seconds: number;
-  nanoseconds: number;
-};
-
-type UserData = {
-  company: string;
-  suscription_expire_datetime: SubscriptionDatetime;
-  last_name: string;
-  created_datetime: SubscriptionDatetime;
-  last_login_datetime: SubscriptionDatetime;
-  suscription: number;
-  first_name: string;
-  rol: number;
-};
+import { fetchUserData } from "@/utils/requests";
+import { UserData } from "@/constants/user";
 
 const defaultUserData: UserData = {
   company: '',
@@ -30,58 +15,27 @@ const defaultUserData: UserData = {
   last_login_datetime: { seconds: 0, nanoseconds: 0 },
   suscription: 0,
   first_name: '',
-  rol: 0,
+  role: 0,
 };
 
 export default function Page() {
   const [data, setData] = useState<UserData | null>(null);
-  const [selectedItem, setSelectedItem] = useState<string>("Panel Principal"); // Nuevo estado
+const [selectedItem, setSelectedItem] = useState<string>("Panel Principal");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const storedEmail = localStorage.getItem("trackerEmail") ?? "";
-        const storedToken = localStorage.getItem("trackerToken") ?? "";
-        console.log(storedToken);
-        fetch(`https://resto-admin-backend.uc.r.appspot.com/auth/getUser?id=${storedEmail}`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${storedToken}`,
-            "Content-Type": "application/json",
-          }
-        })
-          .then((res) => res.json())
-          .then((json) => {
-            const convertToSubscriptionDatetime = (dateStr: string): SubscriptionDatetime => {
-              const date = new Date(dateStr);
-              return {
-                seconds: Math.floor(date.getTime() / 1000),
-                nanoseconds: (date.getMilliseconds() * 1000000),
-              };
-            };
+useEffect(() => {
+  const fetchData = async () => {
+    const userData: UserData | undefined = await fetchUserData();
+    
+    // Asegúrate de que userData no sea undefined
+    if (userData) {
+      setData(userData); // Solo guarda si userData no es undefined
+    } else {
+      setData(null); // O puedes manejarlo de otra forma, si lo prefieres
+    }
+  };
 
-            const userData: UserData = {
-              company: json.company,
-              suscription_expire_datetime: convertToSubscriptionDatetime(json.suscription_expire_datetime),
-              last_name: json.last_name,
-              created_datetime: convertToSubscriptionDatetime(json.created_datetime),
-              last_login_datetime: convertToSubscriptionDatetime(json.last_login_datetime),
-              suscription: json.suscription,
-              first_name: json.first_name,
-              rol: json.rol,
-            };
-
-            console.log('userData before setting:', userData); // Verifica los datos antes de llamar a setData
-            setData(userData);
-          })
-          .catch((error) => console.error("Error fetching data:", error));
-      } catch (error) {
-        console.error("Error fetching document:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
   // Añade un useEffect para observar cuando `data` cambie
   useEffect(() => {
