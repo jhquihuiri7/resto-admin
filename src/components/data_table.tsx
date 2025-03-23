@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { Plus, Trash } from "lucide-react"
+import { Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { DialogCreateUser } from "./create_user_component"
 import { UserData } from "@/constants/user"
 import { fetchUsers } from "@/utils/requests"
 
@@ -111,9 +112,7 @@ export function DataTable() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-sm"
         />
-        <Button className="flex items-center gap-2">
-          <Plus size={16} /> Agregar Usuario
-        </Button>
+        <DialogCreateUser/>
       </div>
       <div className="rounded-md border">
         <Table>
