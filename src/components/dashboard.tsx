@@ -149,16 +149,9 @@ const sumaryValues = [
 
 
 export function Dashboard() {
-  const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("desktop")
-  setActiveChart("desktop")
-  //const total = React.useMemo(
-  //  () => ({
-  //    month: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-  //    Week: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
-  //    day: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
-  //  }),
-  //  []
-  //)
+  //const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("desktop")
+  const activeChart = "desktop"
+  //setActiveChart("des")
 
   return (
     <Card>
