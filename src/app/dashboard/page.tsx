@@ -7,6 +7,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { fetchUserData } from "@/utils/requests";
 import { UserData } from "@/constants/user";
 import { Dashboard } from "@/components/dashboard";
+import { useRouter } from "next/navigation";
+import { validateToken } from "@/utils/requests";
 
 
 type VariableType = "opcion1" | "opcion2" | "opcion3";
@@ -39,11 +41,25 @@ const defaultUserData: UserData = {
   role: 0,
 };
 
-export default function Page() {
-const [data, setData] = useState<UserData | null>(null);
-const [selectedItem, setSelectedItem] = useState<string>("Panel Principal");
 
+export default function Page() {
+  const router = useRouter();
+  const [data, setData] = useState<UserData | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string>("Panel Principal");
+
+  
 useEffect(() => {
+  const handleToken = async () => {
+    const idToken = await localStorage.getItem("trackerToken")
+    if (idToken) {
+      console.log(idToken)
+      await validateToken(idToken)
+    } else {
+      router.push("/")
+    }
+  };
+  handleToken();
+
   const fetchData = async () => {
     const userData: UserData | undefined = await fetchUserData();
     

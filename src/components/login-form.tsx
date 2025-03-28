@@ -33,7 +33,7 @@ export function LoginForm({
       console.log("Usuario autenticado:", user?.email);  // Using optional chaining
   
       // Obtener el token de autenticación
-      const idToken = await user.getIdToken();
+      const idToken = await user.getIdToken(true);
       const userEmail = user?.email || "";  // Safely access email using optional chaining
   
       localStorage.setItem("trackerToken", idToken);

@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -39,7 +40,18 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const router = useRouter();
   const { isMobile } = useSidebar()
+  const handleLogOut = () => {
+    console.log('Logout ejecutado');
+    localStorage.removeItem('trackerEmail');
+    localStorage.removeItem('trackerToken');
+    router.push("/");
+    // Aquí puedes agregar la lógica de logout, como redirigir o limpiar el estado del usuario
+    // Por ejemplo:
+    // window.location.href = "/login";
+    // o cualquier lógica de autenticación que uses
+  };
 
   return (
     <SidebarMenu>
@@ -102,7 +114,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>

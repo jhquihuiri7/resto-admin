@@ -89,3 +89,26 @@ export const fetchUserData = async () => {
 
 
   }
+
+  export const validateToken = async (token: string) => {
+    try { 
+      const res = await fetch('/api/validateToken', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+  
+      const data = await res.json();
+  
+      if (res.ok) {
+        console.log('Usuario autenticado:', data);
+      } else {
+        console.log('Error de autenticación:', data.error);
+      }
+    } catch (error) {
+      console.error('Error al obtener el token:', error);
+    }
+  };
+  
