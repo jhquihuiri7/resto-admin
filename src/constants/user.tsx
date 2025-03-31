@@ -4,6 +4,7 @@ export type SubscriptionDatetime = {
 };
 
 export type UserData = {
+    id:string;
     company: string;
     suscription_expire_datetime: SubscriptionDatetime;
     last_name: string;

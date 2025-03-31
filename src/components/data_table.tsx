@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/table"
 import { DialogCreateUser } from "./create_user_component"
 import { UserData } from "@/constants/user"
-import { fetchUsers } from "@/utils/requests"
+import { fetchUsers, deleteUser } from "@/utils/requests"
 
 
 export function DataTable() {
@@ -59,19 +59,33 @@ export function DataTable() {
     fetchData();
   }, []);
 
-  const handleDelete = (index: number) => {
-    console.log(index)
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await deleteUser(id);
+      if (res["mensaje"] === "ok") {
+        // Si la eliminación fue exitosa, recargar los usuarios
+        const fetchedUsers: UserData[] | undefined = await fetchUsers();
+        if (fetchedUsers) {
+          setData(fetchedUsers); // Actualiza la lista de usuarios
+        }
+      }
+    } catch (err) {
+      console.log("Error al eliminar usuario", err);
+    }
+
+
   }
 
   const columns: ColumnDef<UserData>[] = [
     { accessorKey: "first_name", header: "Nombre" },
     { accessorKey: "last_name", header: "Apellido" },
     { accessorKey: "role", header: "Rol" },
+    { accessorKey: "id", header: "Correo" },
     {
       id: "actions",
       header: "Acciones",
       cell: ({ row }) => (
-        <Button size="sm" onClick={() => handleDelete(row.index)}>
+        <Button size="sm" onClick={() => handleDelete(row.getValue("id"))}>
           <Trash size={16} />
         </Button>
       ),

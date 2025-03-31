@@ -31,6 +31,7 @@ const MapaComponentes = ({ variable }: { variable: VariableType }) => {
 
 
 const defaultUserData: UserData = {
+  id:'',
   company: '',
   suscription_expire_datetime: { seconds: 0, nanoseconds: 0 },
   last_name: '',

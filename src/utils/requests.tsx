@@ -29,6 +29,7 @@ export const fetchUserData = async () => {
       };
   
       const userData: UserData = {
+        id:json.id,
         company: json.company,
         suscription_expire_datetime: convertToSubscriptionDatetime(json.suscription_expire_datetime),
         last_name: json.last_name,
@@ -68,6 +69,7 @@ export const fetchUserData = async () => {
         json.map((item) => {
             console.log('Item:', item);
             const userData: UserData = {
+                id:item.id,
                 company: item.company,
                 suscription_expire_datetime: item.suscription_expire_datetime,
                 last_name: item.last_name,
@@ -92,7 +94,7 @@ export const fetchUserData = async () => {
 
   export const validateToken = async (token: string) => {
     try { 
-      const res = await fetch('/api/validateToken', {
+      const res = await fetch('https://resto-admin-backend.uc.r.appspot.com/api/validateToken', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,4 +113,32 @@ export const fetchUserData = async () => {
       console.error('Error al obtener el token:', error);
     }
   };
+  
+  export const deleteUser = async (userId:string) => {
+    try {
+      const storedToken = localStorage.getItem("trackerToken") ?? "";
+      
+      const res = await fetch(`https://resto-admin-backend.uc.r.appspot.com/auth/deleteUser?id=${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${storedToken}`,
+        },
+      });
+  
+      const data = await res.json();
+  
+      if (res.ok) {
+        console.log('Usuario eliminado:', data);
+        return {"mensaje":"ok"}
+      } else {
+        console.log('Error al eliminar usuario:', data.error);
+        return {"mensaje":"error"}
+      }
+    } catch (error) {
+      console.error('Error al hacer la solicitud DELETE:', error);
+      return {"mensaje":"error"}
+    }
+  };
+
   
