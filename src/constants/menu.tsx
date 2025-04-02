@@ -29,6 +29,7 @@ export class NavMenuManager {
         isActive: true,
         items: [
           { title: "Panel Principal", url: "#" },
+          { title: "Restaurantes", url: "/restaurantes" },
           { title: "Usuarios", url: "#" },
           { title: "Equipo", url: "#" }
         ],
@@ -53,6 +54,7 @@ export class NavMenuManager {
     ];
     this.validNumbersMap = {
       "Panel Principal": [0, 1, 2, 5],
+      "Restaurantes": [0,3],
       "Usuarios": [0,3],
       "Equipo": [1, 5, 6],
       "Administrar Menu": [0, 1,3, 6],

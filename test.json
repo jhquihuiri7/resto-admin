@@ -1,0 +1,24 @@
+{
+    "id": "user_123",
+    "name": "Juan Pérez",
+    "email": "juan@email.com",
+    "role": "admin",  
+    "restaurant_id": "rest_001", 
+    "branch_id": "branch_001" 
+  }
+  
+  {
+    "id": "rest_001",
+    "name": "Restaurante El Buen Sabor",
+    "owner_id": "user_001",
+    "branches": ["branch_001", "branch_002"]
+  }
+  
+  {
+    "id": "branch_001",
+    "restaurant_id": "rest_001",
+    "name": "Sucursal Centro",
+    "address": "Av. Principal 123",
+    "phone": "+593123456789",
+    "tables": ["table_001", "table_002"]
+  }

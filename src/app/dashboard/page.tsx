@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { DataTable } from "@/components/data_table";
+import { DataTableRestaurants } from "@/components/data_table_restaurants";
+import { DataTableUsers } from "@/components/data_table_users";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { fetchUserData } from "@/utils/requests";
 import { UserData } from "@/constants/user";
@@ -10,17 +11,20 @@ import { Dashboard } from "@/components/dashboard";
 import { useRouter } from "next/navigation";
 
 
-type VariableType = "opcion1" | "opcion2" | "opcion3";
+type VariableType = "opcion1" | "opcion2" | "opcion3" | "opcion4";
 
 const Componente1 = () => <Dashboard/>;
-const Componente2 = () => <DataTable/>;
-const Componente3 = () => <DataTable/>;
+const Componente2 = () => <DataTableRestaurants/>;
+const Componente3 = () => <DataTableUsers/>;
+const Componente4 = () => <DataTableUsers/>;
+
 
 
 const componenteMapa: Record<VariableType, React.FC> = {
   opcion1: Componente1,
   opcion2: Componente2,
-  opcion3: Componente3
+  opcion3: Componente3,
+  opcion4: Componente4
 };
 
 const MapaComponentes = ({ variable }: { variable: VariableType }) => {
@@ -71,8 +75,9 @@ useEffect(() => {
   
   const opcionesValidas: Record<string, VariableType> = {
     "Panel Principal": "opcion1",
-    "Usuarios": "opcion2",
-    "Equipo": "opcion3",
+    "Restaurantes": "opcion2",
+    "Usuarios": "opcion3",
+    "Equipo": "opcion4",
   };
 
   return (

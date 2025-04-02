@@ -1,4 +1,8 @@
+import { RestaurantData } from "@/constants/restaurants";
 import { UserData} from "@/constants/user";
+
+const url_base = "http://localhost:8080"
+
 export const fetchUserData = async () => {
     try {
       const storedEmail = localStorage.getItem("trackerEmail") ?? "";
@@ -133,5 +137,88 @@ export const fetchUserData = async () => {
       return {"mensaje":"error"}
     }
   };
+
+  export const fetchRestaurants = async () => {
+    try {
+        const restaurants: RestaurantData[] = [];
+        const storedToken = localStorage.getItem("trackerToken") ?? "";
+
+        const response = await fetch(`${url_base}/restaurant/getRestaurants`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${storedToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          return null
+        }
+        
+        const json : RestaurantData[] = await response.json();
+
+        json.map((item) => {
+            console.log('Item:', item);
+            const data: RestaurantData = {
+                id:item.id,
+                name:item.name,
+                branches: item.branches,
+                
+              };
+            restaurants.push(data)
+
+          });
+   
+        console.log("userData before setting:", restaurants);
+        return restaurants;
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+  }
+  export const createRestaurant = async (data : RestaurantData) => {
+    try {
+        const storedToken = localStorage.getItem("trackerToken") ?? "";
+
+        const res = await fetch(`${url_base}/restaurant/createRestaurant`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${storedToken}`,
+            "Content-Type": "application/json",
+          },
+          body:JSON.stringify(data)
+        });
+    
+        if (res.ok) {
+          console.log('Restaurante creado');
+          return {"mensaje":"ok"}
+        } else {
+          console.log('Error al crear restaurante:', res.text);
+          return {"mensaje":"error"}
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+
+
+  }
+  export const deleteRestaurant = async (id : string) => {
+    try {
+        const storedToken = localStorage.getItem("trackerToken") ?? "";
+
+        const res = await fetch(`${url_base}/restaurant/deleteRestaurant?id=${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${storedToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        return res
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+
+
+  }
 
   

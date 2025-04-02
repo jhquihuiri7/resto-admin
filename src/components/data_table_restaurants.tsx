@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,7 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
-
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -25,76 +26,64 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { DialogCreateUser } from "./create_user_component"
-import { UserData } from "@/constants/user"
-import { fetchUsers, deleteUser } from "@/utils/requests"
+import { DialogCreateRestaurant } from "./create_restaurant_component"
+import { RestaurantData } from "@/constants/restaurants"
+import { deleteRestaurant, fetchRestaurants } from "@/utils/requests"
 import { useRouter } from "next/navigation";
 
-
-export function DataTable() {
-  
-  const [data, setData] = React.useState<UserData[]>([])
+export function DataTableRestaurants() {
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [data, setData] = React.useState<RestaurantData[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [search, setSearch] = React.useState("")
   const router = useRouter();
-   
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedUsers: UserData[] | undefined | null= await fetchUsers();
-
-        if (fetchedUsers) {
-          setData(fetchedUsers); // Guarda los usuarios en el estado
-        } else {
-          setData([]);
-          router.push("/")
-        }
-      } catch (err) {
-        console.log(err)
-        //setError('Error fetching users');
+  const fetchData = async () => {
+    try {
+      const fetchedData: RestaurantData[] | undefined | null = await fetchRestaurants();
+      if (fetchedData) {
+        setData(fetchedData);
+      } else {
+        setData([]);
+        router.push("/");
       }
-    };
-
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  React.useEffect(() => {
     fetchData();
   }, [router]);
 
   const handleDelete = async (id: string) => {
+    setLoadingId(id);
     try {
-      const res = await deleteUser(id);
-      if (res["mensaje"] === "ok") {
-        // Si la eliminación fue exitosa, recargar los usuarios
-        const fetchedUsers: UserData[] | undefined | null= await fetchUsers();
-        if (fetchedUsers) {
-          setData(fetchedUsers); // Guarda los usuarios en el estado
-        } else {
-          setData([]);
-          router.push("/")
-        }
+      const res: Response | undefined = await deleteRestaurant(id);
+      if (res?.ok) {
+        const fetchedData: RestaurantData[] | undefined | null = await fetchRestaurants();
+        setData(fetchedData || []);
       }
     } catch (err) {
-      console.log("Error al eliminar usuario", err);
+      console.log("Error al eliminar restaurante", err);
     }
-  }
+    setLoadingId(null);
+  };
 
-  const columns: ColumnDef<UserData>[] = [
-    { accessorKey: "first_name", header: "Nombre" },
-    { accessorKey: "last_name", header: "Apellido" },
-    { accessorKey: "role", header: "Rol" },
-    { accessorKey: "id", header: "Correo" },
+  const columns: ColumnDef<RestaurantData>[] = [
+    { accessorKey: "id", header: "Id" },
+    { accessorKey: "name", header: "Restaurante" },
     {
       id: "actions",
       header: "Acciones",
       cell: ({ row }) => (
-        <Button size="sm" onClick={() => handleDelete(row.getValue("id"))}>
-          <Trash size={16} />
+        <Button size="sm" onClick={() => handleDelete(row.getValue("id"))} disabled={loadingId === row.getValue("id")}>
+          {loadingId === row.getValue("id") ? <Loader2 className="animate-spin" /> : <Trash size={16} />}
         </Button>
       ),
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -113,13 +102,11 @@ export function DataTable() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   React.useEffect(() => {
-    table.getColumn("first_name")?.setFilterValue(search)
-    
-
-  }, [search, table])
+    table.getColumn("name")?.setFilterValue(search);
+  }, [search, table]);
 
   return (
     <div className="w-full">
@@ -130,7 +117,7 @@ export function DataTable() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-sm"
         />
-        <DialogCreateUser/>
+        <DialogCreateRestaurant onClose={fetchData}/>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -162,7 +149,10 @@ export function DataTable() {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center">
-                  No results.
+                  <div className="w-full flex flex-row justify-center">
+                    Cargando resultados
+                    <Loader2 className="animate-spin" />
+                  </div>
                 </TableCell>
               </TableRow>
             )}
@@ -170,5 +160,5 @@ export function DataTable() {
         </Table>
       </div>
     </div>
-  )
+  );
 }
