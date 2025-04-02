@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,8 +24,9 @@ import {
 import { createUser } from "@/utils/requests";
 import { UserData } from "@/constants/user";
 
-export function DialogCreateUser() {
+export function DialogCreateUser({ onClose }: { onClose: () => void }) {
   const [open, setOpen] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   
   // State to hold form data
   const [name, setName] = useState("");
@@ -38,7 +39,7 @@ export function DialogCreateUser() {
   // Handle form submission
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault(); // Prevent page refresh on form submit
-
+    setLoading(true)
     const userData: UserData = {
       id: mail,
       last_name: apellido,
@@ -54,6 +55,7 @@ export function DialogCreateUser() {
       const res:  UserData | undefined | { mensaje: string; } | null = await createUser(userData);
       if (res?.mensaje === "ok") {
         setOpen(false); // Cerrar el diálogo al completar la creación
+        onClose();
       }
     } catch (err) {
       console.log("Error al crear usuario", err);
@@ -66,6 +68,8 @@ export function DialogCreateUser() {
     setSuscription(0);
     setMail("");
     setPassword("");
+
+    setLoading(false)
   };
 
   return (
@@ -164,7 +168,10 @@ export function DialogCreateUser() {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Crear</Button>
+            <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="animate-spin" />}
+            {isLoading ? "Porfavor espere" : "Crear"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -116,7 +116,7 @@ export const fetchUserData = async () => {
     try {
       const storedToken = localStorage.getItem("trackerToken") ?? "";
       
-      const res = await fetch(`http://localhost:8080/auth/createUser`, {
+      const res = await fetch(`https://resto-admin-backend.uc.r.appspot.com/auth/createUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

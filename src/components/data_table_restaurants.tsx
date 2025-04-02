@@ -150,8 +150,8 @@ export function DataTableRestaurants() {
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center">
                   <div className="w-full flex flex-row justify-center">
-                    Cargando resultados
                     <Loader2 className="animate-spin" />
+                    Cargando resultados
                   </div>
                 </TableCell>
               </TableRow>

@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { Trash } from "lucide-react"
+import { Trash, Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,6 +29,7 @@ import { DialogCreateUser } from "./create_user_component"
 import { UserData } from "@/constants/user"
 import { fetchUsers, deleteUser } from "@/utils/requests"
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 export function DataTableUsers() {
@@ -39,30 +40,31 @@ export function DataTableUsers() {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [search, setSearch] = React.useState("")
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const router = useRouter();
    
+  const fetchData = async () => {
+    try {
+      const fetchedUsers: UserData[] | undefined | null= await fetchUsers();
+
+      if (fetchedUsers) {
+        setData(fetchedUsers); // Guarda los usuarios en el estado
+      } else {
+        setData([]);
+        router.push("/")
+      }
+    } catch (err) {
+      console.log(err)
+      //setError('Error fetching users');
+    }
+  };
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedUsers: UserData[] | undefined | null= await fetchUsers();
-
-        if (fetchedUsers) {
-          setData(fetchedUsers); // Guarda los usuarios en el estado
-        } else {
-          setData([]);
-          router.push("/")
-        }
-      } catch (err) {
-        console.log(err)
-        //setError('Error fetching users');
-      }
-    };
-
     fetchData();
   }, [router]);
 
   const handleDelete = async (id: string) => {
+    setLoadingId(id);
     try {
       const res = await deleteUser(id);
       if (res["mensaje"] === "ok") {
@@ -78,6 +80,7 @@ export function DataTableUsers() {
     } catch (err) {
       console.log("Error al eliminar usuario", err);
     }
+    setLoadingId(null);
   }
 
   const columns: ColumnDef<UserData>[] = [
@@ -89,8 +92,8 @@ export function DataTableUsers() {
       id: "actions",
       header: "Acciones",
       cell: ({ row }) => (
-        <Button size="sm" onClick={() => handleDelete(row.getValue("id"))}>
-          <Trash size={16} />
+        <Button size="sm" onClick={() => handleDelete(row.getValue("id"))} disabled={loadingId === row.getValue("id")}>
+          {loadingId === row.getValue("id") ? <Loader2 className="animate-spin" /> : <Trash size={16} />}
         </Button>
       ),
     },
@@ -130,7 +133,7 @@ export function DataTableUsers() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-sm"
         />
-        <DialogCreateUser/>
+        <DialogCreateUser onClose={fetchData}/>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -162,7 +165,10 @@ export function DataTableUsers() {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center">
-                  No results.
+                  <div className="w-full flex flex-row justify-center">
+                    <Loader2 className="animate-spin" />
+                    Cargando resultados
+                  </div>
                 </TableCell>
               </TableRow>
             )}
