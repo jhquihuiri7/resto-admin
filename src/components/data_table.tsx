@@ -28,6 +28,7 @@ import {
 import { DialogCreateUser } from "./create_user_component"
 import { UserData } from "@/constants/user"
 import { fetchUsers, deleteUser } from "@/utils/requests"
+import { useRouter } from "next/navigation";
 
 
 export function DataTable() {
@@ -38,17 +39,19 @@ export function DataTable() {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [search, setSearch] = React.useState("")
+  const router = useRouter();
    
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedUsers: UserData[] | undefined = await fetchUsers();
+        const fetchedUsers: UserData[] | undefined | null= await fetchUsers();
 
         if (fetchedUsers) {
           setData(fetchedUsers); // Guarda los usuarios en el estado
         } else {
           setData([]);
+          router.push("/")
         }
       } catch (err) {
         console.log(err)
@@ -57,23 +60,24 @@ export function DataTable() {
     };
 
     fetchData();
-  }, []);
+  }, [router]);
 
   const handleDelete = async (id: string) => {
     try {
       const res = await deleteUser(id);
       if (res["mensaje"] === "ok") {
         // Si la eliminación fue exitosa, recargar los usuarios
-        const fetchedUsers: UserData[] | undefined = await fetchUsers();
+        const fetchedUsers: UserData[] | undefined | null= await fetchUsers();
         if (fetchedUsers) {
-          setData(fetchedUsers); // Actualiza la lista de usuarios
+          setData(fetchedUsers); // Guarda los usuarios en el estado
+        } else {
+          setData([]);
+          router.push("/")
         }
       }
     } catch (err) {
       console.log("Error al eliminar usuario", err);
     }
-
-
   }
 
   const columns: ColumnDef<UserData>[] = [

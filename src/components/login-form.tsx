@@ -9,6 +9,7 @@ import { useState } from "react";
 import {app} from '../firebase/client';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react"
 
 
 
@@ -19,12 +20,13 @@ export function LoginForm({
   const auth = getAuth(app);
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
+    setLoading(true)
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
   
@@ -41,11 +43,12 @@ export function LoginForm({
       //localStorage.setItem("trackerName", idToken);
   
       // Puedes usar el token para enviarlo a tu backend o almacenarlo
+      setLoading(false)
       setError(null); // Limpiar errores si el inicio de sesión es exitoso
-  
       router.push("/dashboard");
     } catch (error: unknown) {
       console.error("Error al iniciar sesión:", error);
+      setLoading(false)
       setError("Email o contraseña incorrectas"); // Mostrar el mensaje de error al usuario
     }
   };
@@ -89,8 +92,9 @@ export function LoginForm({
               {error && (
                 <div className="text-sm text-red-500">{error}</div>
               )}
-              <Button type="submit" className="w-full">
-                Ingresar
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="animate-spin" />}
+                {isLoading ? "Porfavor espere" : "Ingresar"}
               </Button>
             </div>
           </form>

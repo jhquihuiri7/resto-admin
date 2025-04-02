@@ -52,12 +52,12 @@ export class NavMenuManager {
       },
     ];
     this.validNumbersMap = {
-      "Panel Principal": [0, 2, 5],
-      "Usuarios": [0,1, 3, 4],
-      "Equipo": [2, 5, 6],
-      "Administrar Menu": [0, 3, 6],
+      "Panel Principal": [0, 1, 2, 5],
+      "Usuarios": [0,3],
+      "Equipo": [1, 5, 6],
+      "Administrar Menu": [0, 1,3, 6],
       "Mesas": [1, 4, 5],
-      "Pedidos": [0, 2, 4]
+      "Pedidos": [0, 1, 2, 4]
     };
     this.updateShowStatus();
   }

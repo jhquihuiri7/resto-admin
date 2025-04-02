@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,45 +21,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { createUser } from "@/utils/requests";
+import { UserData } from "@/constants/user";
 
 export function DialogCreateUser() {
+  const [open, setOpen] = useState(false);
+  
   // State to hold form data
   const [name, setName] = useState("");
   const [apellido, setApellido] = useState("");
-  const [role, setRole] = useState<string>("0");
-  const [suscription, setSuscription] = useState("");
+  const [role, setRole] = useState<number>(0);
+  const [suscription, setSuscription] = useState<number>(0);
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
 
   // Handle form submission
-  const handleCreate = (event: React.FormEvent) => {
+  const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault(); // Prevent page refresh on form submit
 
-    // Create an object with all the form data
-    const userData = {
-      name,
-      apellido,
-      role,
-      suscription,
-      mail,
-      password,
+    const userData: UserData = {
+      id: mail,
+      last_name: apellido,
+      first_name: name,
+      company: "",
+      role: role,
+      suscription: suscription,
+      email: mail,
+      password: password,
     };
+    
+    try {
+      const res:  UserData | undefined | { mensaje: string; } | null = await createUser(userData);
+      if (res?.mensaje === "ok") {
+        setOpen(false); // Cerrar el diálogo al completar la creación
+      }
+    } catch (err) {
+      console.log("Error al crear usuario", err);
+    }
 
-    // Log the user data to the console
-    console.log("User Data:", userData);
-
-    // Reset form fields after submission (optional)
+    // Reset form fields
     setName("");
     setApellido("");
-    setRole("0");
-    setSuscription("");
+    setRole(0);
+    setSuscription(0);
     setMail("");
     setPassword("");
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <Plus size={16} /> Agregar Usuario
@@ -80,7 +91,7 @@ export function DialogCreateUser() {
               id="name"
               className="col-span-3"
               value={name}
-              onChange={(e) => setName(e.target.value)} // Bind value and onChange to state
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -91,7 +102,7 @@ export function DialogCreateUser() {
               id="apellido"
               className="col-span-3"
               value={apellido}
-              onChange={(e) => setApellido(e.target.value)} // Bind value and onChange to state
+              onChange={(e) => setApellido(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -99,8 +110,8 @@ export function DialogCreateUser() {
               Rol
             </Label>
             <Select
-              value={role}
-              onValueChange={(value) => setRole(value)} // Bind Select value to state
+              value={String(role)}
+              onValueChange={(value) => setRole(Number(value))}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Selecciona un rol" />
@@ -126,7 +137,7 @@ export function DialogCreateUser() {
               id="suscription"
               className="col-span-3"
               value={suscription}
-              onChange={(e) => setSuscription(e.target.value)} // Bind value and onChange to state
+              onChange={(e) => setSuscription(Number(e.target.value))}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -137,7 +148,7 @@ export function DialogCreateUser() {
               id="mail"
               className="col-span-3"
               value={mail}
-              onChange={(e) => setMail(e.target.value)} // Bind value and onChange to state
+              onChange={(e) => setMail(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -147,8 +158,9 @@ export function DialogCreateUser() {
             <Input
               id="password"
               className="col-span-3"
+              type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} // Bind value and onChange to state
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <DialogFooter>

@@ -1,5 +1,4 @@
-import { UserData, SubscriptionDatetime
- } from "@/constants/user";
+import { UserData} from "@/constants/user";
 export const fetchUserData = async () => {
     try {
       const storedEmail = localStorage.getItem("trackerEmail") ?? "";
@@ -15,29 +14,20 @@ export const fetchUserData = async () => {
       });
   
       if (!response.ok) {
-        throw new Error(`Error en la respuesta: ${response.statusText}`);
+        return null
       }
   
       const json = await response.json();
   
-      const convertToSubscriptionDatetime = (dateStr: string): SubscriptionDatetime => {
-        const date = new Date(dateStr);
-        return {
-          seconds: Math.floor(date.getTime() / 1000),
-          nanoseconds: date.getMilliseconds() * 1000000,
-        };
-      };
-  
       const userData: UserData = {
         id:json.id,
         company: json.company,
-        suscription_expire_datetime: convertToSubscriptionDatetime(json.suscription_expire_datetime),
         last_name: json.last_name,
-        created_datetime: convertToSubscriptionDatetime(json.created_datetime),
-        last_login_datetime: convertToSubscriptionDatetime(json.last_login_datetime),
         suscription: json.suscription,
         first_name: json.first_name,
         role: json.role,
+        email: json.id,
+        password: ""
       };
   
       console.log("userData before setting:", userData);
@@ -61,7 +51,7 @@ export const fetchUserData = async () => {
         });
     
         if (!response.ok) {
-          throw new Error(`Error en la respuesta: ${response.statusText}`);
+          return null
         }
         
         const json : UserData[] = await response.json();
@@ -70,14 +60,13 @@ export const fetchUserData = async () => {
             console.log('Item:', item);
             const userData: UserData = {
                 id:item.id,
+                email:item.email,
                 company: item.company,
-                suscription_expire_datetime: item.suscription_expire_datetime,
                 last_name: item.last_name,
-                created_datetime: item.created_datetime,
-                last_login_datetime: item.last_login_datetime,
                 suscription: item.suscription,
                 first_name: item.first_name,
                 role: item.role,
+                password: item.password
               };
             users.push(userData)
 
@@ -91,28 +80,6 @@ export const fetchUserData = async () => {
 
 
   }
-
-  export const validateToken = async (token: string) => {
-    try { 
-      const res = await fetch('https://resto-admin-backend.uc.r.appspot.com/api/validateToken', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      });
-  
-      const data = await res.json();
-  
-      if (res.ok) {
-        console.log('Usuario autenticado:', data);
-      } else {
-        console.log('Error de autenticación:', data.error);
-      }
-    } catch (error) {
-      console.error('Error al obtener el token:', error);
-    }
-  };
   
   export const deleteUser = async (userId:string) => {
     try {
@@ -137,6 +104,32 @@ export const fetchUserData = async () => {
       }
     } catch (error) {
       console.error('Error al hacer la solicitud DELETE:', error);
+      return {"mensaje":"error"}
+    }
+  };
+
+  export const createUser = async (user:UserData) => {
+    try {
+      const storedToken = localStorage.getItem("trackerToken") ?? "";
+      
+      const res = await fetch(`http://localhost:8080/auth/createUser`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${storedToken}`,
+        },
+        body: JSON.stringify(user),
+      });
+  
+      if (res.ok) {
+        console.log('Usuario creado');
+        return {"mensaje":"ok"}
+      } else {
+        console.log('Error al crear usuario:', res.text);
+        return {"mensaje":"error"}
+      }
+    } catch (error) {
+      console.error('Error al hacer la solicitud CREATE:', error);
       return {"mensaje":"error"}
     }
   };

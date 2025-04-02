@@ -5,14 +5,13 @@ export type SubscriptionDatetime = {
 
 export type UserData = {
     id:string;
+    email: string;
     company: string;
-    suscription_expire_datetime: SubscriptionDatetime;
     last_name: string;
-    created_datetime: SubscriptionDatetime;
-    last_login_datetime: SubscriptionDatetime;
     suscription: number;
     first_name: string;
     role: number;
+    password:string;
 };
 
 export class User {

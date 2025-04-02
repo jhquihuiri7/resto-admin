@@ -8,7 +8,6 @@ import { fetchUserData } from "@/utils/requests";
 import { UserData } from "@/constants/user";
 import { Dashboard } from "@/components/dashboard";
 import { useRouter } from "next/navigation";
-import { validateToken } from "@/utils/requests";
 
 
 type VariableType = "opcion1" | "opcion2" | "opcion3";
@@ -33,13 +32,12 @@ const MapaComponentes = ({ variable }: { variable: VariableType }) => {
 const defaultUserData: UserData = {
   id:'',
   company: '',
-  suscription_expire_datetime: { seconds: 0, nanoseconds: 0 },
   last_name: '',
-  created_datetime: { seconds: 0, nanoseconds: 0 },
-  last_login_datetime: { seconds: 0, nanoseconds: 0 },
   suscription: 0,
   first_name: '',
   role: 0,
+  email: '',
+  password: ''
 };
 
 
@@ -50,30 +48,21 @@ export default function Page() {
 
   
 useEffect(() => {
-  const handleToken = async () => {
-    const idToken = await localStorage.getItem("trackerToken")
-    if (idToken) {
-      console.log(idToken)
-      await validateToken(idToken)
-    } else {
-      router.push("/")
-    }
-  };
-  handleToken();
 
   const fetchData = async () => {
-    const userData: UserData | undefined = await fetchUserData();
+    const userData: UserData | undefined | null = await fetchUserData();
     
     // Asegúrate de que userData no sea undefined
     if (userData) {
       setData(userData); // Solo guarda si userData no es undefined
     } else {
       setData(null); // O puedes manejarlo de otra forma, si lo prefieres
+      router.push("/")
     }
   };
 
   fetchData();
-}, []);
+}, [router]);
 
   // Añade un useEffect para observar cuando `data` cambie
   useEffect(() => {
