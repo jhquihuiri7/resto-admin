@@ -15,12 +15,12 @@ export interface Menu {
 }
 
 export class NavMenuManager {
-  private number: number;
+  private role: string;
   private navMenu: Menu[];
-  private validNumbersMap: Record<string, number[]>;
+  private validRolesMap: Record<string, string[]>;
 
-  constructor(number: number) {
-    this.number = number;
+  constructor(role: string) {
+    this.role = role;
     this.navMenu = [
       {
         title: "Dashboard",
@@ -52,14 +52,14 @@ export class NavMenuManager {
         ],
       },
     ];
-    this.validNumbersMap = {
-      "Panel Principal": [0, 1, 2, 5],
-      "Restaurantes": [0,3],
-      "Usuarios": [0,3],
-      "Equipo": [1, 5, 6],
-      "Administrar Menu": [0, 1,3, 6],
-      "Mesas": [1, 4, 5],
-      "Pedidos": [0, 1, 2, 4]
+    this.validRolesMap = {
+      "Panel Principal": ["owner"],
+      "Restaurantes": ["owner"],
+      "Usuarios": ["owner"],
+      "Equipo": ["owner"],
+      "Administrar Menu": ["owner"],
+      "Mesas": ["owner"],
+      "Pedidos": ["owner"]
     };
     this.updateShowStatus();
   }
@@ -68,7 +68,7 @@ export class NavMenuManager {
     this.navMenu.forEach(menu => {
       if (menu.items) {
         menu.items.forEach(item => {
-          item.show = this.validNumbersMap[item.title]?.includes(this.number) || false;
+          item.show = this.validRolesMap[item.title]?.includes(this.role) || false;
         });
       }
     });

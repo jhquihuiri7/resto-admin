@@ -1,7 +1,8 @@
 import { RestaurantData } from "@/constants/restaurants";
 import { UserData} from "@/constants/user";
 
-const url_base = "http://localhost:8080"
+//const url_base = "http://localhost:8080"
+const url_base = "https://resto-admin-backend.uc.r.appspot.com"
 
 export const fetchUserData = async () => {
     try {
@@ -25,9 +26,8 @@ export const fetchUserData = async () => {
   
       const userData: UserData = {
         id:json.id,
-        company: json.company,
+        restaurant_id: json.restaurant_id,
         last_name: json.last_name,
-        suscription: json.suscription,
         first_name: json.first_name,
         role: json.role,
         email: json.id,
@@ -65,9 +65,8 @@ export const fetchUserData = async () => {
             const userData: UserData = {
                 id:item.id,
                 email:item.email,
-                company: item.company,
+                restaurant_id: item.restaurant_id,
                 last_name: item.last_name,
-                suscription: item.suscription,
                 first_name: item.first_name,
                 role: item.role,
                 password: item.password

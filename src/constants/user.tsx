@@ -1,16 +1,10 @@
-export type SubscriptionDatetime = {
-    seconds: number;
-    nanoseconds: number;
-};
-
 export type UserData = {
     id:string;
     email: string;
-    company: string;
+    restaurant_id: string;
     last_name: string;
-    suscription: number;
     first_name: string;
-    role: number;
+    role: string;
     password:string;
 };
 

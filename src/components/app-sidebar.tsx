@@ -56,7 +56,7 @@ export function AppSidebar({ data, selectedItem, setSelectedItem, ...props }: Ap
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{data.company}</span>
+                  <span className="truncate font-medium">{data.restaurant_id}</span>
                   <span className="truncate text-xs">Restaurante</span>
                 </div>
               </a>

@@ -35,11 +35,10 @@ const MapaComponentes = ({ variable }: { variable: VariableType }) => {
 
 const defaultUserData: UserData = {
   id:'',
-  company: '',
+  restaurant_id: '',
   last_name: '',
-  suscription: 0,
   first_name: '',
-  role: 0,
+  role: "",
   email: '',
   password: ''
 };

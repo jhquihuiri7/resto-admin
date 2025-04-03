@@ -31,10 +31,10 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
   // State to hold form data
   const [name, setName] = useState("");
   const [apellido, setApellido] = useState("");
-  const [role, setRole] = useState<number>(0);
-  const [suscription, setSuscription] = useState<number>(0);
+  const [role, setRole] = useState<string>("");
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
+  const [restaurant, setRestaurant] = useState("");
 
   // Handle form submission
   const handleCreate = async (event: React.FormEvent) => {
@@ -44,9 +44,8 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
       id: mail,
       last_name: apellido,
       first_name: name,
-      company: "",
+      restaurant_id: restaurant,
       role: role,
-      suscription: suscription,
       email: mail,
       password: password,
     };
@@ -64,8 +63,8 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
     // Reset form fields
     setName("");
     setApellido("");
-    setRole(0);
-    setSuscription(0);
+    setRole("");
+    setRestaurant("");
     setMail("");
     setPassword("");
 
@@ -114,8 +113,8 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
               Rol
             </Label>
             <Select
-              value={String(role)}
-              onValueChange={(value) => setRole(Number(value))}
+              value={role}
+              onValueChange={(value) => setRole(value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Selecciona un rol" />
@@ -123,26 +122,39 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Roles</SelectLabel>
-                  <SelectItem value="0">Propietario</SelectItem>
-                  <SelectItem value="1">Admin</SelectItem>
-                  <SelectItem value="2">Caja</SelectItem>
-                  <SelectItem value="3">Cocina</SelectItem>
-                  <SelectItem value="4">Bar</SelectItem>
-                  <SelectItem value="5">Mesero</SelectItem>
+                  <SelectItem value="owner">Propietario</SelectItem>
+                  <SelectItem value="owner2">Admin</SelectItem>
+                  <SelectItem value="owner3">Caja</SelectItem>
+                  <SelectItem value="owner4">Cocina</SelectItem>
+                  <SelectItem value="owner5">Bar</SelectItem>
+                  <SelectItem value="owner6">Mesero</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="suscription" className="text-right">
-              Suscripción
+            <Label htmlFor="restaurant_id" className="text-right">
+              Restaurante
             </Label>
-            <Input
-              id="suscription"
-              className="col-span-3"
-              value={suscription}
-              onChange={(e) => setSuscription(Number(e.target.value))}
-            />
+            <Select
+              value={restaurant}
+              onValueChange={(value) => setRestaurant(value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecciona un restaurante" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Restaurantes</SelectLabel>
+                  <SelectItem value="owner7">Propietario</SelectItem>
+                  <SelectItem value="owner8">Admin</SelectItem>
+                  <SelectItem value="owner9">Caja</SelectItem>
+                  <SelectItem value="owner10">Cocina</SelectItem>
+                  <SelectItem value="owner11">Bar</SelectItem>
+                  <SelectItem value="owner12">Mesero</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="mail" className="text-right">
