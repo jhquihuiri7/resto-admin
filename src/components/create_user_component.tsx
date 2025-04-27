@@ -21,8 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createUser } from "@/utils/requests";
+import { createUser, fetchRestaurants } from "@/utils/requests";
 import { UserData } from "@/constants/user";
+import { RestaurantData } from "@/constants/restaurants";
 
 export function DialogCreateUser({ onClose }: { onClose: () => void }) {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,8 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [restaurant, setRestaurant] = useState("");
+  const [restaurants, setRestaurants] = useState<RestaurantData[]>([]);
+
 
   // Handle form submission
   const handleCreate = async (event: React.FormEvent) => {
@@ -71,8 +74,27 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
     setLoading(false)
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      loadRestaurants();
+    }
+  };
+  
+  const loadRestaurants = async () => {
+    try {
+      const data = await fetchRestaurants();
+      if (data) {
+        setRestaurants(data);
+      }
+    } catch (error) {
+      console.error("Error cargando restaurantes", error);
+    }
+  };
+  
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <Plus size={16} /> Agregar Usuario
@@ -122,12 +144,13 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Roles</SelectLabel>
+                  <SelectItem value="system">Sistema</SelectItem>
                   <SelectItem value="owner">Propietario</SelectItem>
-                  <SelectItem value="owner2">Admin</SelectItem>
-                  <SelectItem value="owner3">Caja</SelectItem>
-                  <SelectItem value="owner4">Cocina</SelectItem>
-                  <SelectItem value="owner5">Bar</SelectItem>
-                  <SelectItem value="owner6">Mesero</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="cashier">Caja</SelectItem>
+                  <SelectItem value="kitchen">Cocina</SelectItem>
+                  <SelectItem value="bar">Bar</SelectItem>
+                  <SelectItem value="waiter">Mesero</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -146,12 +169,11 @@ export function DialogCreateUser({ onClose }: { onClose: () => void }) {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Restaurantes</SelectLabel>
-                  <SelectItem value="owner7">Propietario</SelectItem>
-                  <SelectItem value="owner8">Admin</SelectItem>
-                  <SelectItem value="owner9">Caja</SelectItem>
-                  <SelectItem value="owner10">Cocina</SelectItem>
-                  <SelectItem value="owner11">Bar</SelectItem>
-                  <SelectItem value="owner12">Mesero</SelectItem>
+                  {restaurants.map((rest) => (
+                    <SelectItem key={rest.id} value={rest.id}>
+                      {rest.name}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>

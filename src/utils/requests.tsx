@@ -165,7 +165,6 @@ export const fetchUserData = async () => {
                 
               };
             restaurants.push(data)
-
           });
    
         console.log("userData before setting:", restaurants);
